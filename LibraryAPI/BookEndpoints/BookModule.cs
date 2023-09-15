@@ -14,7 +14,7 @@ namespace LibraryAPI.BookEndpoints
     {
         public static void AddBookEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapGet("/book", (LibraryDbContext context) =>
+            app.MapGet("/book/", (LibraryDbContext context) =>
             {
                 return context.Books.ToListAsync();
             }).WithName("AllBooks");
@@ -29,7 +29,7 @@ namespace LibraryAPI.BookEndpoints
                 return Results.NotFound("The book with this title was found, perhaps you spelled it wrong?");
             }).WithName("Find Title");
 
-            app.MapPost("/book", async (LibraryDbContext context, CreateBookDTO model,
+            app.MapPost("/book/", async (LibraryDbContext context, CreateBookDTO model,
                 IMapper _mapper, [FromServices] IValidator<CreateBookDTO> _validator) =>
             {
                 var validationResult = await _validator.ValidateAsync(model);
@@ -49,9 +49,9 @@ namespace LibraryAPI.BookEndpoints
                 BookDTO bookDTO = _mapper.Map<BookDTO>(book);
 
                 return Results.Ok(book);
-            });
+            }).WithName("Add new book to database");
 
-            app.MapDelete("/book", async (LibraryDbContext context, int id) =>
+            app.MapDelete("/book/", async (LibraryDbContext context, int id) =>
             {
                 var result = await context.Books.FirstOrDefaultAsync(x => x.Id == id);
                 if (result != null)
@@ -62,6 +62,25 @@ namespace LibraryAPI.BookEndpoints
                 }
                 return Results.BadRequest("No book had that ID");
             }).WithName("Delete");
+
+            app.MapPut("/book/", async (LibraryDbContext context, int id, UpdateBookDTO model,
+                IMapper _mapper, [FromServices] IValidator<UpdateBookDTO> _validator) =>
+            {
+                var validationResult = await _validator.ValidateAsync(model);
+                if (!validationResult.IsValid)
+                {
+                    return Results.BadRequest("Invalid input or something ");
+                }
+                var bookToUpdate = context.Books.FirstOrDefault(x => x.Id == id);
+                bookToUpdate = _mapper.Map<Book>(model);
+
+                context.Update(bookToUpdate);
+
+                await context.SaveChangesAsync();
+
+                return Results.Ok(bookToUpdate);
+
+            });
         }
     }
 }
