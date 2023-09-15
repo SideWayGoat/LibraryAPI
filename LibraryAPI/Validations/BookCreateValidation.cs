@@ -11,7 +11,7 @@ namespace LibraryAPI.Validations
             RuleFor(model => model.Author).NotEmpty();
             RuleFor(model => model.Genre).NotEmpty();
             RuleFor(model => model.Description).NotEmpty();
-            RuleFor(model => model.PublishingYear).NotEmpty();
+            RuleFor(model => model.PublishingYear).NotEmpty()/*.LessThanOrEqualTo(DateTime.Now.Year)*/;
             RuleFor(model => model.NumberInStock).NotEmpty();
         }
     }

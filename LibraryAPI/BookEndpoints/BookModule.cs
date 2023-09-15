@@ -19,15 +19,31 @@ namespace LibraryAPI.BookEndpoints
                 return context.Books.ToListAsync();
             }).WithName("AllBooks");
 
-            app.MapGet("/book/{Title}", async (LibraryDbContext context, string title) =>
+            app.MapGet("/book/search/{Title}", async (LibraryDbContext context, string title, IMapper _mapper) =>
             {
                 var book = await context.Books.FirstOrDefaultAsync(x => x.Title.ToLower().Trim() == title.ToLower().Trim());
+
+                var bookDTO = _mapper.Map<BookDTO>(book);
+
                 if (book != null)
                 {
-                    return Results.Ok(book);
+                    return Results.Ok(bookDTO);
                 }
                 return Results.NotFound("The book with this title was found, perhaps you spelled it wrong?");
             }).WithName("Find Title");
+
+            app.MapGet("/book/search/{Author}/books", async (LibraryDbContext context, string author, IMapper _mapper) =>
+            {
+                var book = await context.Books.Where(x => x.Author == author).ToListAsync();
+
+                var bookDTO = _mapper.Map<IEnumerable<BookDTO>>(book);
+                
+                if (book != null)
+                {
+                    return Results.Ok(bookDTO);
+                }
+                return Results.NotFound("The book from this author was found, perhaps you spelled it wrong?");
+            }).WithName("Find author");
 
             app.MapPost("/book/", async (LibraryDbContext context, CreateBookDTO model,
                 IMapper _mapper, [FromServices] IValidator<CreateBookDTO> _validator) =>
