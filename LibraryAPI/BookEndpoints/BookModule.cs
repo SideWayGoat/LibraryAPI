@@ -80,7 +80,7 @@ namespace LibraryAPI.BookEndpoints
 
                 return Results.Ok(bookToUpdate);
 
-            });
+            }).WithName("Update Book Information");
         }
     }
 }
