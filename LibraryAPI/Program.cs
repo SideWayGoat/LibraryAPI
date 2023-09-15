@@ -1,8 +1,12 @@
 
+using AutoMapper;
 using FluentValidation;
 using LibraryAPI.BookEndpoints;
 using LibraryAPI.Data;
+using LibraryAPI.DTOs;
 using LibraryAPI.MapConfig;
+using LibraryBookModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI
@@ -35,7 +39,8 @@ namespace LibraryAPI
             app.UseHttpsRedirection();
 
             app.AddBookEndpoints();
-            
+
+
             app.UseAuthorization();
 
             app.Run();
