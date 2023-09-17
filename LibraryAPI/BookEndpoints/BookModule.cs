@@ -14,7 +14,7 @@ namespace LibraryAPI.BookEndpoints
     {
         public static void AddBookEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapGet("/book/", (LibraryDbContext context) =>
+            app.MapGet("/book/all", (LibraryDbContext context) =>
             {
                 return context.Books.ToListAsync();
             }).WithName("AllBooks");
@@ -43,9 +43,9 @@ namespace LibraryAPI.BookEndpoints
                     return Results.Ok(bookDTO);
                 }
                 return Results.NotFound("The book from this author was found, perhaps you spelled it wrong?");
-            }).WithName("Find author");
+            }).WithName("search");
 
-            app.MapPost("/book/", async (LibraryDbContext context, CreateBookDTO model,
+            app.MapPost("/book/create", async (LibraryDbContext context, CreateBookDTO model,
                 IMapper _mapper, [FromServices] IValidator<CreateBookDTO> _validator) =>
             {
                 var validationResult = await _validator.ValidateAsync(model);
@@ -65,9 +65,9 @@ namespace LibraryAPI.BookEndpoints
                 BookDTO bookDTO = _mapper.Map<BookDTO>(book);
 
                 return Results.Ok(book);
-            }).WithName("Add new book to database");
+            }).WithName("create");
 
-            app.MapDelete("/book/", async (LibraryDbContext context, int id) =>
+            app.MapDelete("/book/delete", async (LibraryDbContext context, int id) =>
             {
                 var result = await context.Books.FirstOrDefaultAsync(x => x.Id == id);
                 if (result != null)
@@ -79,7 +79,7 @@ namespace LibraryAPI.BookEndpoints
                 return Results.BadRequest("No book had that ID");
             }).WithName("Delete");
 
-            app.MapPut("/book/", async (LibraryDbContext context, int id, UpdateBookDTO model,
+            app.MapPut("/book/update", async (LibraryDbContext context, int id, UpdateBookDTO model,
                 IMapper _mapper, [FromServices] IValidator<UpdateBookDTO> _validator) =>
             {
                 var validationResult = await _validator.ValidateAsync(model);
