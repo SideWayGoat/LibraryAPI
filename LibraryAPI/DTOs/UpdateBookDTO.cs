@@ -7,5 +7,6 @@
         public string Genre { get; set; }
         public string Description { get; set; }
         public int NumberInStock { get; set; }
+        public string PublishingYear { get; set; }
     }
 }

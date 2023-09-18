@@ -1,40 +1,68 @@
 ﻿using LibraryAPI.Data;
 using LibraryAPI.DTOs;
+using LibraryAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 
 namespace LibraryAPI.BookRepository
 {
-    public class BookRepo : IBookRepo
+    public class BookRepo : BaseService, IBookRepo
     {
-        private readonly LibraryDbContext _context;
-        public BookRepo(LibraryDbContext context)
+        private readonly IHttpClientFactory _clientFactory;
+
+        public BookRepo(IHttpClientFactory _clientFactory) : base(_clientFactory)
         {
-            this._context = context;
-        }
-        public Task<T> CreateBookAsync<T>(CreateBookDTO createBookDTO)
-        {
-            throw new NotImplementedException();
+            this._clientFactory = _clientFactory;
         }
 
-        public Task<T> DeleteBookAsync<T>(int id)
+        public async Task<T> CreateBookAsync<T>(CreateBookDTO createBookDTO)
         {
-            throw new NotImplementedException();
+            return await this.SendAsync<T>(new Models.ApiRequest
+            {
+                ApiType = StaticDetails.ApiType.POST,
+                Data = createBookDTO,
+                Url = StaticDetails.BookApiBase + "/book/create",
+                AccessToken = ""
+            });
         }
 
-        public Task<IEnumerable> GetAllBooks<T>()
+        public async Task<T> DeleteBookAsync<T>(int id)
         {
-            throw new NotImplementedException();
+            return await this.SendAsync<T>(new Models.ApiRequest
+            {
+                ApiType = StaticDetails.ApiType.DELETE,
+                Url = StaticDetails.BookApiBase + "/book/delete"
+            });
         }
 
-        public Task<T> GetBookById<T>(int id)
+        public async Task<T> GetAllBooks<T>()
         {
-            throw new NotImplementedException();
+            return await this.SendAsync<T>(new Models.ApiRequest
+            {
+                ApiType = StaticDetails.ApiType.GET,
+                Url = StaticDetails.BookApiBase + "/book/all",
+                AccessToken = ""
+            });
         }
 
-        public Task<T> UpdateBookAsync<T>(UpdateBookDTO model)
+        public async Task<T> GetBookByTitle<T>(string title)
         {
-            throw new NotImplementedException();
+            return await this.SendAsync<T>(new Models.ApiRequest
+            {
+                ApiType = StaticDetails.ApiType.GET,
+                Url = StaticDetails.BookApiBase + "/book/search/{Title}",
+                AccessToken = ""
+            });
+        }
+
+        public async Task<T> UpdateBookAsync<T>(UpdateBookDTO model)
+        {
+            return await this.SendAsync<T>(new Models.ApiRequest
+            {
+                ApiType = StaticDetails.ApiType.PUT,
+                Url = StaticDetails.BookApiBase + "/book/update",
+                AccessToken = ""
+            });
         }
     }
 }

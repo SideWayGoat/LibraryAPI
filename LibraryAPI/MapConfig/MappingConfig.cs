@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LibraryAPI.DTOs;
+using LibraryAPI.Models;
 using LibraryBookModels;
 
 namespace LibraryAPI.MapConfig
