@@ -6,8 +6,6 @@ using LibraryAPI.Models;
 using LibraryBookModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 
 namespace LibraryAPI.BookEndpoints
 {
@@ -23,7 +21,7 @@ namespace LibraryAPI.BookEndpoints
                 response.Result = bookDTO;
                 response.IsSuccess = true;
                 response.StatusCode = System.Net.HttpStatusCode.OK;
-                
+
 
                 return Results.Ok(response);
             }).WithName("AllBooks");
@@ -32,27 +30,33 @@ namespace LibraryAPI.BookEndpoints
             {
                 ApiResponse response = new ApiResponse();
                 var book = await context.Books.FirstOrDefaultAsync(t => t.Title == title);
-                var bookDTO = _mapper.Map<BookDTO>(book);
-                response.Result = bookDTO;
-                response.IsSuccess = true;
-                response.StatusCode = System.Net.HttpStatusCode.OK;
-                return Results.Ok(response);
+                if (book != null)
+                {
+                    var bookDTO = _mapper.Map<BookDTO>(book);
+                    response.Result = bookDTO;
+                    response.IsSuccess = true;
+                    response.StatusCode = System.Net.HttpStatusCode.OK;
+                    return Results.Ok(response);
+                }
+                response.ErrorMessages.Add("No title was found with that name");
+                return Results.NotFound(response);
             }).WithName("Find Title");
 
             app.MapGet("/book/search/{Author}/books", async (LibraryDbContext context, string author, IMapper _mapper) =>
             {
                 ApiResponse response = new ApiResponse();
                 var book = await context.Books.Where(x => x.Author == author).ToListAsync();
-                var bookDTO = _mapper.Map<IEnumerable<BookDTO>>(book);
-                response.Result = bookDTO;
-                response.IsSuccess = true;
-                response.StatusCode = System.Net.HttpStatusCode.OK;
-                
-                if (book != null)
+
+                if (book.Any())
                 {
+                    var bookDTO = _mapper.Map<IEnumerable<BookDTO>>(book);
+                    response.Result = bookDTO;
+                    response.IsSuccess = true;
+                    response.StatusCode = System.Net.HttpStatusCode.OK;
                     return Results.Ok(bookDTO);
                 }
-                return Results.NotFound("The book from this author was found, perhaps you spelled it wrong?");
+                response.ErrorMessages.Add("No book from this author was found, perhaps you spelled it wrong?");
+                return Results.NotFound(response);
             }).WithName("search");
 
             app.MapPost("/book/create", async (LibraryDbContext context, CreateBookDTO model,
@@ -88,7 +92,7 @@ namespace LibraryAPI.BookEndpoints
                 ApiResponse response = new() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
 
                 var bookToDelete = await context.Books.FirstOrDefaultAsync(n => n.Id == id);
-                if(bookToDelete != null)
+                if (bookToDelete != null)
                 {
                     context.Remove(bookToDelete);
                     response.IsSuccess = true;
@@ -105,7 +109,7 @@ namespace LibraryAPI.BookEndpoints
             {
                 ApiResponse response = new() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
                 var validationResult = await _validator.ValidateAsync(model);
-                if(!validationResult.IsValid)
+                if (!validationResult.IsValid)
                 {
                     response.ErrorMessages.Add(validationResult.Errors.FirstOrDefault().ToString());
                 }
@@ -126,7 +130,7 @@ namespace LibraryAPI.BookEndpoints
                 response.StatusCode = System.Net.HttpStatusCode.OK;
 
                 return Results.Ok(response);
-            
+
 
             }).WithName("Update Book Information");
         }
