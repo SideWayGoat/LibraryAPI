@@ -39,7 +39,7 @@ namespace LibraryAPI.BookEndpoints
                     response.StatusCode = System.Net.HttpStatusCode.OK;
                     return Results.Ok(response);
                 }
-                response.ErrorMessages.Add("No title was found with that name");
+                response.ErrorMessages.Add("No match was found, did you spell correctly?");
                 return Results.NotFound(response);
             }).WithName("Search");
 
