@@ -26,26 +26,10 @@ namespace LibraryAPI.BookEndpoints
                 return Results.Ok(response);
             }).WithName("AllBooks");
 
-            app.MapGet("/book/search/{Title}", async (LibraryDbContext context, string title, IMapper _mapper) =>
+            app.MapGet("/book/search/", async (LibraryDbContext context, string search, IMapper _mapper) =>
             {
                 ApiResponse response = new ApiResponse();
-                var book = await context.Books.FirstOrDefaultAsync(t => t.Title == title);
-                if (book != null)
-                {
-                    var bookDTO = _mapper.Map<BookDTO>(book);
-                    response.Result = bookDTO;
-                    response.IsSuccess = true;
-                    response.StatusCode = System.Net.HttpStatusCode.OK;
-                    return Results.Ok(response);
-                }
-                response.ErrorMessages.Add("No title was found with that name");
-                return Results.NotFound(response);
-            }).WithName("Find Title");
-
-            app.MapGet("/book/search/{Author}/books", async (LibraryDbContext context, string author, IMapper _mapper) =>
-            {
-                ApiResponse response = new ApiResponse();
-                var book = await context.Books.Where(x => x.Author == author).ToListAsync();
+                var book = await context.Books.Where(s => (s.Title == search || s.Author == search || s.Genre == search)).ToListAsync();
 
                 if (book.Any())
                 {
@@ -53,11 +37,28 @@ namespace LibraryAPI.BookEndpoints
                     response.Result = bookDTO;
                     response.IsSuccess = true;
                     response.StatusCode = System.Net.HttpStatusCode.OK;
-                    return Results.Ok(bookDTO);
+                    return Results.Ok(response);
                 }
-                response.ErrorMessages.Add("No book from this author was found, perhaps you spelled it wrong?");
+                response.ErrorMessages.Add("No title was found with that name");
                 return Results.NotFound(response);
-            }).WithName("search");
+            }).WithName("Search");
+
+            //app.MapGet("/book/search/{Author}/books", async (LibraryDbContext context, string author, IMapper _mapper) =>
+            //{
+            //    ApiResponse response = new ApiResponse();
+            //    var book = await context.Books.Where(x => x.Author == author).ToListAsync();
+
+            //    if (book.Any())
+            //    {
+            //        var bookDTO = _mapper.Map<IEnumerable<BookDTO>>(book);
+            //        response.Result = bookDTO;
+            //        response.IsSuccess = true;
+            //        response.StatusCode = System.Net.HttpStatusCode.OK;
+            //        return Results.Ok(bookDTO);
+            //    }
+            //    response.ErrorMessages.Add("No book from this author was found, perhaps you spelled it wrong?");
+            //    return Results.NotFound(response);
+            //}).WithName("search");
 
             app.MapPost("/book/create", async (LibraryDbContext context, CreateBookDTO model,
                 IMapper _mapper, [FromServices] IValidator<CreateBookDTO> _validator) =>
