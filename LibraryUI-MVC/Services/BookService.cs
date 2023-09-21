@@ -45,7 +45,7 @@ namespace LibraryUI_MVC.Services
             });
         }
 
-        public async Task<T> GetBookByTitle<T>(string title)
+        public async Task<T> GetBookBySearch<T>(string title)
         {
             return await this.SendAsync<T>(new ApiRequest
             {

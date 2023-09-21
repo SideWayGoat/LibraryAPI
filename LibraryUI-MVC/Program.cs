@@ -1,3 +1,6 @@
+using LibraryAPI;
+using LibraryUI_MVC.Services;
+
 namespace LibraryUI_MVC
 {
     public class Program
@@ -8,6 +11,10 @@ namespace LibraryUI_MVC
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpClient<IBookService, BookService>();
+            builder.Services.AddScoped<IBookService, BookService>();
+
+            StaticDetails.BookApiBase = builder.Configuration["ServiceUrls:LibraryAPI"];
 
             var app = builder.Build();
 
