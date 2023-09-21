@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LibraryBookModels
+namespace LibraryBookModels.Models
 {
     public class Book
     {
@@ -12,7 +12,7 @@ namespace LibraryBookModels
         public string Author { get; set; }
         public string Genre { get; set; }
         public string Description { get; set; }
-        public string? PublishingYear { get; set; }
+        public string PublishingYear { get; set; }
         public int NumberInStock { get; set; }
     }
 }

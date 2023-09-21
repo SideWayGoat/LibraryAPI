@@ -3,7 +3,7 @@ using FluentValidation;
 using LibraryAPI.Data;
 using LibraryAPI.DTOs;
 using LibraryAPI.Models;
-using LibraryBookModels;
+using LibraryBookModels.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
