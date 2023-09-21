@@ -24,7 +24,7 @@ namespace LibraryAPI.BookEndpoints
 
 
                 return Results.Ok(response);
-            }).WithName("AllBooks");
+            }).WithName("AllBooks").Produces(200);
 
             app.MapGet("/book/search/", async (LibraryDbContext context, string search, IMapper _mapper) =>
             {
@@ -90,7 +90,7 @@ namespace LibraryAPI.BookEndpoints
 
             app.MapDelete("/book/delete", async (LibraryDbContext context, int id) =>
             {
-                ApiResponse response = new() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
+                ApiResponse response = new ApiResponse();
 
                 var bookToDelete = await context.Books.FirstOrDefaultAsync(n => n.Id == id);
                 if (bookToDelete != null)
@@ -108,7 +108,7 @@ namespace LibraryAPI.BookEndpoints
             app.MapPut("/book/update", async (LibraryDbContext context, int id, UpdateBookDTO model,
                 IMapper _mapper, [FromServices] IValidator<UpdateBookDTO> _validator) =>
             {
-                ApiResponse response = new() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
+                ApiResponse response = new ApiResponse();
                 var validationResult = await _validator.ValidateAsync(model);
                 if (!validationResult.IsValid)
                 {
