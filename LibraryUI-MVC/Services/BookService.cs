@@ -1,23 +1,23 @@
-﻿using LibraryAPI.Data;
-using LibraryAPI.DTOs;
+﻿using LibraryAPI.DTOs;
+using LibraryAPI;
 using LibraryAPI.Services;
-using Microsoft.EntityFrameworkCore;
-using System.Collections;
+using LibraryBookModels.Models;
+using LibraryAPI.Models;
 
-namespace LibraryAPI.BookRepository
+namespace LibraryUI_MVC.Services
 {
-    public class BookRepo : BaseService, IBookRepo
+    public class BookService : BaseService, IBookService
     {
         private readonly IHttpClientFactory _clientFactory;
 
-        public BookRepo(IHttpClientFactory _clientFactory) : base(_clientFactory)
+        public BookService(IHttpClientFactory _clientFactory) : base(_clientFactory)
         {
             this._clientFactory = _clientFactory;
         }
 
         public async Task<T> CreateBookAsync<T>(CreateBookDTO createBookDTO)
         {
-            return await this.SendAsync<T>(new Models.ApiRequest
+            return await this.SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.POST,
                 Data = createBookDTO,
@@ -28,7 +28,7 @@ namespace LibraryAPI.BookRepository
 
         public async Task<T> DeleteBookAsync<T>(int id)
         {
-            return await this.SendAsync<T>(new Models.ApiRequest
+            return await this.SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.DELETE,
                 Url = StaticDetails.BookApiBase + "/book/delete"
@@ -37,7 +37,7 @@ namespace LibraryAPI.BookRepository
 
         public async Task<T> GetAllBooks<T>()
         {
-            return await this.SendAsync<T>(new Models.ApiRequest
+            return await this.SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.GET,
                 Url = StaticDetails.BookApiBase + "/book/all",
@@ -47,17 +47,17 @@ namespace LibraryAPI.BookRepository
 
         public async Task<T> GetBookByTitle<T>(string title)
         {
-            return await this.SendAsync<T>(new Models.ApiRequest
+            return await this.SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.GET,
-                Url = StaticDetails.BookApiBase + "/book/search/{Title}",
+                Url = StaticDetails.BookApiBase + "/book/search/",
                 AccessToken = ""
             });
         }
 
         public async Task<T> UpdateBookAsync<T>(UpdateBookDTO model)
         {
-            return await this.SendAsync<T>(new Models.ApiRequest
+            return await this.SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.PUT,
                 Url = StaticDetails.BookApiBase + "/book/update",
@@ -66,3 +66,4 @@ namespace LibraryAPI.BookRepository
         }
     }
 }
+

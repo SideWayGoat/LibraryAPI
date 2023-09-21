@@ -2,12 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>LibraryUI_MVC</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LibraryAPI\LibraryAPI.csproj" />
     <ProjectReference Include="..\LibraryBookModels\LibraryBookModels.csproj" />
   </ItemGroup>
 
