@@ -2,22 +2,8 @@
 @model IEnumerable<BookDTO>;
 
 @{
-
-	ViewData["Title"] = "All Books";
+	ViewData["Title"] = "Search";
 }
-
-<h1>All Books</h1>
-
-<div class="form-row">
-	<table>
-		<tr>
-			<td>
-				<a asp-action="CreateBookView" class="btn btn-success">Add New Book</a>
-
-			</td>
-		</tr>
-	</table>
-</div>
 
 <table class="table">
 	<thead>
@@ -48,3 +34,5 @@
 		}
 	</tbody>
 </table>
+
+

@@ -22,5 +22,17 @@ namespace LibraryUI_MVC.Controllers
 			}
 			return View(books);
 		}
+
+		public async Task<IActionResult> Search(string searchString)
+		{
+			ViewData["CurrentFilter"] = searchString;
+			var response = await _bookService.GetBookBySearch<ResponseDTO>(searchString);
+			if(response != null && response.IsSuccess)
+			{
+				List<BookDTO> bookDTO = JsonConvert.DeserializeObject<List<BookDTO>>(Convert.ToString(response.Result));
+				return View (bookDTO);
+			}
+			return NotFound();
+		}
 	}
 }
