@@ -45,12 +45,12 @@ namespace LibraryUI_MVC.Services
             });
         }
 
-        public async Task<T> GetBookBySearch<T>(string title)
+        public async Task<T> GetBookBySearch<T>(string search)
         {
             return await this.SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.GET,
-                Url = StaticDetails.BookApiBase + "/book/search/",
+                Url = StaticDetails.BookApiBase + $"/book/search/{search}" ,
                 AccessToken = ""
             });
         }

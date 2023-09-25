@@ -26,10 +26,10 @@ namespace LibraryAPI.BookEndpoints
                 return Results.Ok(response);
             }).WithName("AllBooks").Produces(200);
 
-            app.MapGet("/book/search/", async (LibraryDbContext context, string search, IMapper _mapper) =>
+            app.MapGet("/book/search/{search}", async (LibraryDbContext context, string search, IMapper _mapper) =>
             {
                 ApiResponse response = new ApiResponse();
-                var book = await context.Books.Where(s => (s.Title == search || s.Author == search || s.Genre == search)).ToListAsync();
+                var book = await context.Books.Where(s => (s.Title.Contains(search) || s.Author.Contains(search) || s.Genre.Contains(search))).ToListAsync();
 
                 if (book.Any())
                 {

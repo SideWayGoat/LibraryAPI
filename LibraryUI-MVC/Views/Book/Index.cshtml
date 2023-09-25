@@ -8,16 +8,25 @@
 
 <h1>All Books</h1>
 
+
+
 <div class="form-row">
 	<table>
 		<tr>
 			<td>
 				<a asp-action="CreateBookView" class="btn btn-success">Add New Book</a>
-
 			</td>
 		</tr>
 	</table>
 </div>
+<hr />
+
+<form asp-controller="Book" asp-action="Index">
+	<div class="form-group">
+		<input type="text" name="searchString" placeholder="Search..." />
+		<input type="submit" value="Search" class="btn btn-primary" />
+	</div>
+</form>
 
 <table class="table">
 	<thead>
@@ -37,6 +46,7 @@
 		</tr>
 	</thead>
 	<tbody>
+
 		@foreach (var item in Model)
 		{
 			<tr>
@@ -46,5 +56,5 @@
 				<td>@Html.DisplayFor(modelItem => item.Genre)</td>
 			</tr>
 		}
-	</tbody>
-</table>
+		</tbody>
+	</table>
