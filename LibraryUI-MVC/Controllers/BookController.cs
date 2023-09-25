@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LibraryAPI.DTOs;
+using LibraryBookModels.Models;
 using LibraryUI_MVC.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -46,7 +47,7 @@ namespace LibraryUI_MVC.Controllers
 			return View(model);
 		}
 
-		public async Task<IActionResult> Details(string Title, [FromServices]IMapper _mapper)
+		public async Task<IActionResult> Details(string Title)
 		{
 			List<BookDTO> bDTO = new List<BookDTO>();
 			BookDTO book = new BookDTO();
@@ -65,18 +66,20 @@ namespace LibraryUI_MVC.Controllers
 			var response = await _bookService.GetBookBySearch<ResponseDTO>(title);
 			if(response != null && response.IsSuccess)
 			{
-				BookDTO model = JsonConvert.DeserializeObject<BookDTO>(Convert.ToString(response.Result));
-				return View(model);
+				List<UpdateBookDTO> model = JsonConvert.DeserializeObject<List<UpdateBookDTO>>(Convert.ToString(response.Result));
+				var book = model[0];
+				return View(book);
 			}
 			return NotFound();
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> UpdateBook(UpdateBookDTO model)
+		public async Task<IActionResult> UpdateBook(UpdateBookDTO model, int id)
 		{
 			if (ModelState.IsValid)
 			{
-				var response = await _bookService.UpdateBookAsync<ResponseDTO>(model);
+				id = model.id;
+				var response = await _bookService.UpdateBookAsync<ResponseDTO>(model, id);
 				if(response != null && response.IsSuccess)
 				{
 					return RedirectToAction(nameof(BookIndex));

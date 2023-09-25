@@ -55,12 +55,12 @@ namespace LibraryUI_MVC.Services
             });
         }
 
-        public async Task<T> UpdateBookAsync<T>(UpdateBookDTO model)
+        public async Task<T> UpdateBookAsync<T>(UpdateBookDTO model, int id)
         {
             return await this.SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.PUT,
-                Url = StaticDetails.BookApiBase + "/book/update",
+                Url = StaticDetails.BookApiBase + $"/book/update/{id}",
                 AccessToken = "",
                 Data = model
             });

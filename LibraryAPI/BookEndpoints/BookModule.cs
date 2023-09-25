@@ -105,7 +105,7 @@ namespace LibraryAPI.BookEndpoints
 
             }).WithName("Delete");
 
-            app.MapPut("/book/update", async (LibraryDbContext context, int id, UpdateBookDTO model,
+            app.MapPut("/book/update/{id}", async (LibraryDbContext context, int id, UpdateBookDTO model,
                 IMapper _mapper, [FromServices] IValidator<UpdateBookDTO> _validator) =>
             {
                 ApiResponse response = new ApiResponse();
@@ -121,6 +121,7 @@ namespace LibraryAPI.BookEndpoints
                 bookToUpdate.Description = model.Description;
                 bookToUpdate.Title = model.Title;
                 bookToUpdate.Genre = model.Genre;
+                bookToUpdate.PublishingYear = model.PublishingYear;
 
                 await context.SaveChangesAsync();
 
