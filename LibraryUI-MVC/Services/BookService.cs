@@ -61,7 +61,8 @@ namespace LibraryUI_MVC.Services
             {
                 ApiType = StaticDetails.ApiType.PUT,
                 Url = StaticDetails.BookApiBase + "/book/update",
-                AccessToken = ""
+                AccessToken = "",
+                Data = model
             });
         }
     }

@@ -1,4 +1,5 @@
 using LibraryAPI;
+using LibraryAPI.MapConfig;
 using LibraryUI_MVC.Services;
 
 namespace LibraryUI_MVC
@@ -13,6 +14,7 @@ namespace LibraryUI_MVC
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpClient<IBookService, BookService>();
             builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddAutoMapper(typeof(MappingConfig));
 
             StaticDetails.BookApiBase = builder.Configuration["ServiceUrls:LibraryAPI"];
 

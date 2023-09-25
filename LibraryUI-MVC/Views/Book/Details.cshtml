@@ -1,0 +1,46 @@
+﻿@using LibraryAPI.DTOs
+@model BookDTO
+
+@{
+	ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+	<h4>Book</h4>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Title)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Title)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Author)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Author)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Description)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Description)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Genre)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Genre)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.PublishingYear)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.PublishingYear)
+		</dd>
+	</dl>
+</div>
+<a asp-action="BookIndex" class="btn btn-info">Return To List </a>

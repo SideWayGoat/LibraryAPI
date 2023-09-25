@@ -14,14 +14,14 @@
 	<table>
 		<tr>
 			<td>
-				<a asp-action="CreateBookView" class="btn btn-success">Add New Book</a>
+				<a asp-controller="Book" asp-action="CreateBook" class="btn btn-success">Add New Book</a>
 			</td>
 		</tr>
 	</table>
 </div>
 <hr />
 
-<form asp-controller="Book" asp-action="Index">
+<form asp-controller="Book" asp-action="BookIndex">
 	<div class="form-group">
 		<input type="text" name="searchString" placeholder="Search..." />
 		<input type="submit" value="Search" class="btn btn-primary" />
@@ -54,6 +54,10 @@
 				<td>@Html.DisplayFor(modelItem => item.Author)</td>
 				<td>@Html.DisplayFor(modelItem => item.PublishingYear)</td>
 				<td>@Html.DisplayFor(modelItem => item.Genre)</td>
+				<td>
+					<a asp-action="Details" class="btn btn-success" asp-route-title="@item.Title">Details</a>
+					<a asp-action="UpdateBook" class="btn btn-warning" asp-route-title="@item.Title">Edit</a>
+				</td>
 			</tr>
 		}
 		</tbody>

@@ -13,6 +13,8 @@ namespace LibraryAPI.MapConfig
             CreateMap<Book, UpdateBookDTO>().ReverseMap();
             CreateMap<Book, BookDTO>().ReverseMap();
             CreateMap<BookDTO, Book>().ForAllMembers(b => b.MapFrom(d => d));
-        }
+            CreateMap<List<BookDTO>, BookDTO>().ForAllMembers(b => b.MapFrom(d => d));
+
+		}
     }
 }
