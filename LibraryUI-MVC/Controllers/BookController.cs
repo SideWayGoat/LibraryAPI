@@ -4,6 +4,7 @@ using LibraryBookModels.Models;
 using LibraryUI_MVC.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 
 namespace LibraryUI_MVC.Controllers
 {
@@ -21,7 +22,7 @@ namespace LibraryUI_MVC.Controllers
 			if (!String.IsNullOrEmpty(searchString))
 			{
 				response = await _bookService.GetBookBySearch<ResponseDTO>(searchString);
-            }
+			}
 			if (response != null && response.IsSuccess)
 			{
 				books = JsonConvert.DeserializeObject<List<BookDTO>>(Convert.ToString(response.Result));
@@ -36,10 +37,10 @@ namespace LibraryUI_MVC.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateBook(CreateBookDTO model)
 		{
-			if(ModelState.IsValid)
+			if (ModelState.IsValid)
 			{
 				var response = await _bookService.CreateBookAsync<ResponseDTO>(model);
-				if(response != null && response.IsSuccess )
+				if (response != null && response.IsSuccess)
 				{
 					return RedirectToAction(nameof(BookIndex));
 				}
@@ -52,7 +53,7 @@ namespace LibraryUI_MVC.Controllers
 			List<BookDTO> bDTO = new List<BookDTO>();
 			BookDTO book = new BookDTO();
 			var response = await _bookService.GetBookBySearch<ResponseDTO>(Title);
-			if( response != null && response.IsSuccess )
+			if (response != null && response.IsSuccess)
 			{
 				bDTO = JsonConvert.DeserializeObject<List<BookDTO>>(Convert.ToString(response.Result));
 				book = bDTO[0];
@@ -64,8 +65,9 @@ namespace LibraryUI_MVC.Controllers
 		public async Task<IActionResult> UpdateBook(string title)
 		{
 			var response = await _bookService.GetBookBySearch<ResponseDTO>(title);
-			if(response != null && response.IsSuccess)
+			if (response != null && response.IsSuccess)
 			{
+
 				List<UpdateBookDTO> model = JsonConvert.DeserializeObject<List<UpdateBookDTO>>(Convert.ToString(response.Result));
 				var book = model[0];
 				return View(book);
@@ -74,16 +76,29 @@ namespace LibraryUI_MVC.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> UpdateBook(UpdateBookDTO model, int id)
+		public async Task<IActionResult> UpdateBook(UpdateBookDTO model, int id, string action)
 		{
 			if (ModelState.IsValid)
 			{
 				id = model.id;
-				var response = await _bookService.UpdateBookAsync<ResponseDTO>(model, id);
-				if(response != null && response.IsSuccess)
+				switch (action)
 				{
-					return RedirectToAction(nameof(BookIndex));
+					case "Delete":
+						var response = await _bookService.DeleteBookAsync<ResponseDTO>(id);
+						if(response != null && response.IsSuccess)
+						{
+							return RedirectToAction(nameof(BookIndex));
+						}
+						break;
+					case "Save":
+						response = await _bookService.UpdateBookAsync<ResponseDTO>(model, id);
+						if (response != null && response.IsSuccess)
+						{
+							return RedirectToAction(nameof(BookIndex));
+						}
+						break;
 				}
+
 			}
 			return View(model);
 		}

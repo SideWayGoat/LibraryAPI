@@ -31,7 +31,7 @@ namespace LibraryUI_MVC.Services
             return await this.SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.DELETE,
-                Url = StaticDetails.BookApiBase + "/book/delete"
+                Url = StaticDetails.BookApiBase + $"/book/delete/{id}"
             });
         }
 

@@ -88,9 +88,9 @@ namespace LibraryAPI.BookEndpoints
                 return Results.Ok(response);
             }).WithName("create");
 
-            app.MapDelete("/book/delete", async (LibraryDbContext context, int id) =>
+            app.MapDelete("/book/delete/{id}", async (LibraryDbContext context, int id) =>
             {
-                ApiResponse response = new ApiResponse();
+                ApiResponse response = new() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest};
 
                 var bookToDelete = await context.Books.FirstOrDefaultAsync(n => n.Id == id);
                 if (bookToDelete != null)
@@ -98,6 +98,7 @@ namespace LibraryAPI.BookEndpoints
                     context.Remove(bookToDelete);
                     response.IsSuccess = true;
                     response.StatusCode = System.Net.HttpStatusCode.OK;
+                    await context.SaveChangesAsync();
                     return Results.Ok(response);
                 }
                 response.ErrorMessages.Add("invalid ID");
@@ -108,8 +109,8 @@ namespace LibraryAPI.BookEndpoints
             app.MapPut("/book/update/{id}", async (LibraryDbContext context, int id, UpdateBookDTO model,
                 IMapper _mapper, [FromServices] IValidator<UpdateBookDTO> _validator) =>
             {
-                ApiResponse response = new ApiResponse();
-                var validationResult = await _validator.ValidateAsync(model);
+                ApiResponse response = new() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
+				var validationResult = await _validator.ValidateAsync(model);
                 if (!validationResult.IsValid)
                 {
                     response.ErrorMessages.Add(validationResult.Errors.FirstOrDefault().ToString());
