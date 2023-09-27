@@ -2,6 +2,7 @@ using FluentValidation;
 using LibraryAPI.BookEndpoints;
 using LibraryAPI.Data;
 using LibraryAPI.MapConfig;
+using LibraryAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI
@@ -17,6 +18,7 @@ namespace LibraryAPI
             builder.Services.AddDbContext<LibraryDbContext>(opt => 
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("connection")));
             builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+            builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddAutoMapper(typeof(MappingConfig));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
