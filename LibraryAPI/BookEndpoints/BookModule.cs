@@ -3,6 +3,7 @@ using FluentValidation;
 using LibraryAPI.Data;
 using LibraryAPI.DTOs;
 using LibraryAPI.Models;
+using LibraryAPI.Services;
 using LibraryBookModels.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,10 @@ namespace LibraryAPI.BookEndpoints
     {
         public static void AddBookEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapGet("/book/all", async (LibraryDbContext context, IMapper _mapper) =>
+            app.MapGet("/book/all", async (IBookRepository _repo, IMapper _mapper) =>
             {
                 ApiResponse response = new ApiResponse();
-                var books = await context.Books.ToListAsync();
+                var books = await _repo.GetAllBooks();
                 var bookDTO = _mapper.Map<IEnumerable<BookDTO>>(books);
                 response.Result = bookDTO;
                 response.IsSuccess = true;
@@ -26,10 +27,10 @@ namespace LibraryAPI.BookEndpoints
                 return Results.Ok(response);
             }).WithName("AllBooks").Produces(200);
 
-            app.MapGet("/book/search/{search}", async (LibraryDbContext context, string search, IMapper _mapper) =>
+            app.MapGet("/book/search/{search}", async (IBookRepository _repo, string search, IMapper _mapper) =>
             {
                 ApiResponse response = new ApiResponse();
-                var book = await context.Books.Where(s => (s.Title.Contains(search) || s.Author.Contains(search) || s.Genre.Contains(search))).ToListAsync();
+                var book = await _repo.GetBySearch(search);
 
                 if (book.Any())
                 {
@@ -60,27 +61,20 @@ namespace LibraryAPI.BookEndpoints
             //    return Results.NotFound(response);
             //}).WithName("search");
 
-            app.MapPost("/book/create", async (LibraryDbContext context, CreateBookDTO model,
+            app.MapPost("/book/create", async (IBookRepository _repo, [FromBody]CreateBookDTO model,
                 IMapper _mapper, [FromServices] IValidator<CreateBookDTO> _validator) =>
             {
-                ApiResponse response = new ApiResponse();
+                ApiResponse response = new() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
                 var validationResult = await _validator.ValidateAsync(model);
                 if (!validationResult.IsValid)
                 {
                     return Results.BadRequest(response);
                 }
-                if (context.Books.FirstOrDefaultAsync(n => n.Title.ToLower() == model.Title.ToLower()) != null)
-                {
-                    response.ErrorMessages.Add("Title already exists");
-                    return Results.BadRequest(response);
-
-                }
                 Book book = _mapper.Map<Book>(model);
 
-                context.Books.Add(book);
-                await context.SaveChangesAsync();
+                var result = await _repo.CreateBook(book);
 
-                BookDTO bookDTO = _mapper.Map<BookDTO>(book);
+                BookDTO bookDTO = _mapper.Map<BookDTO>(result);
                 response.Result = bookDTO;
                 response.IsSuccess = true;
                 response.StatusCode = System.Net.HttpStatusCode.OK;
@@ -88,25 +82,33 @@ namespace LibraryAPI.BookEndpoints
                 return Results.Ok(response);
             }).WithName("create");
 
-            app.MapDelete("/book/delete/{id}", async (LibraryDbContext context, int id) =>
+            app.MapDelete("/book/delete/{id}", async (IBookRepository _repo, int id) =>
             {
                 ApiResponse response = new() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest};
-
-                var bookToDelete = await context.Books.FirstOrDefaultAsync(n => n.Id == id);
-                if (bookToDelete != null)
+                try
                 {
-                    context.Remove(bookToDelete);
-                    response.IsSuccess = true;
-                    response.StatusCode = System.Net.HttpStatusCode.OK;
-                    await context.SaveChangesAsync();
-                    return Results.Ok(response);
+					var bookToDelete = await _repo.DeleteBook(id);
+					if (bookToDelete != null)
+					{
+						response.IsSuccess = true;
+						response.StatusCode = System.Net.HttpStatusCode.OK;
+                        response.Result = bookToDelete;
+						return Results.Ok(response);
+					}
+					response.ErrorMessages.Add("invalid ID");
+                    response.StatusCode = System.Net.HttpStatusCode.NotFound;
+					return Results.NotFound(response);
+				}
+                catch (Exception e)
+                {
+
+                    return Results.BadRequest(e);
                 }
-                response.ErrorMessages.Add("invalid ID");
-                return Results.BadRequest(response);
+
 
             }).WithName("Delete");
 
-            app.MapPut("/book/update/{id}", async (LibraryDbContext context, int id, UpdateBookDTO model,
+            app.MapPut("/book/update/{id}", async (IBookRepository _repo, int id, UpdateBookDTO model,
                 IMapper _mapper, [FromServices] IValidator<UpdateBookDTO> _validator) =>
             {
                 ApiResponse response = new() { IsSuccess = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
@@ -115,18 +117,8 @@ namespace LibraryAPI.BookEndpoints
                 {
                     response.ErrorMessages.Add(validationResult.Errors.FirstOrDefault().ToString());
                 }
-
-                var bookToUpdate = await context.Books.FirstOrDefaultAsync(b => b.Id == id);
-                bookToUpdate.NumberInStock = model.NumberInStock;
-                bookToUpdate.Author = model.Author;
-                bookToUpdate.Description = model.Description;
-                bookToUpdate.Title = model.Title;
-                bookToUpdate.Genre = model.Genre;
-                bookToUpdate.PublishingYear = model.PublishingYear;
-
-                await context.SaveChangesAsync();
-
-                var book = _mapper.Map<Book>(model);
+                var bookToUpdate = _mapper.Map<Book>(model);
+                var result = await _repo.UpdateBook(bookToUpdate);
 
                 response.Result = _mapper.Map<BookDTO>(bookToUpdate);
                 response.IsSuccess = true;
