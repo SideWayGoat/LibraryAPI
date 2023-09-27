@@ -62,7 +62,7 @@ namespace LibraryUI_MVC.Controllers
 			return NotFound();
 		}
 
-		public async Task<IActionResult> UpdateBook(string title)
+		public async Task<IActionResult> EditBook(string title)
 		{
 			var response = await _bookService.GetBookBySearch<ResponseDTO>(title);
 			if (response != null && response.IsSuccess)
@@ -76,22 +76,21 @@ namespace LibraryUI_MVC.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> UpdateBook(UpdateBookDTO model, int id, string action)
+		public async Task<IActionResult> EditBook(UpdateBookDTO model, string action)
 		{
 			if (ModelState.IsValid)
 			{
-				id = model.id;
 				switch (action)
 				{
 					case "Delete":
-						var response = await _bookService.DeleteBookAsync<ResponseDTO>(id);
+						var response = await _bookService.DeleteBookAsync<ResponseDTO>(model.id);
 						if(response != null && response.IsSuccess)
 						{
 							return RedirectToAction(nameof(BookIndex));
 						}
 						break;
 					case "Save":
-						response = await _bookService.UpdateBookAsync<ResponseDTO>(model, id);
+						response = await _bookService.UpdateBookAsync<ResponseDTO>(model, model.id);
 						if (response != null && response.IsSuccess)
 						{
 							return RedirectToAction(nameof(BookIndex));

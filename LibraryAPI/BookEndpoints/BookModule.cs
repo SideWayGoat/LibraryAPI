@@ -69,7 +69,7 @@ namespace LibraryAPI.BookEndpoints
                 {
                     return Results.BadRequest(response);
                 }
-                if (context.Books.FirstOrDefault(n => n.Title.ToLower() == model.Title.ToLower()) != null)
+                if (context.Books.FirstOrDefaultAsync(n => n.Title.ToLower() == model.Title.ToLower()) != null)
                 {
                     response.ErrorMessages.Add("Title already exists");
                     return Results.BadRequest(response);

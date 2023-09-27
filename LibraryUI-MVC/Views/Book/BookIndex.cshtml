@@ -24,7 +24,7 @@
 <form asp-controller="Book" asp-action="BookIndex">
 	<div class="form-group">
 		<input type="text" name="searchString" placeholder="Search..." />
-		<input type="submit" value="Search" class="btn btn-primary" />
+		<input type="submit" value="Filter" class="btn btn-primary" />
 	</div>
 </form>
 
@@ -56,7 +56,7 @@
 				<td>@Html.DisplayFor(modelItem => item.Genre)</td>
 				<td>
 					<a asp-action="Details" class="btn btn-success" asp-route-title="@item.Title">Details</a>
-					<a asp-action="UpdateBook" class="btn btn-warning" asp-route-title="@item.Title">Edit</a>
+					<a asp-action="EditBook" class="btn btn-warning" asp-route-title="@item.Title">Edit</a>
 				</td>
 			</tr>
 		}

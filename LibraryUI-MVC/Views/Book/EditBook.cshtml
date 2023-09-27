@@ -2,12 +2,12 @@
 @model UpdateBookDTO
 
 @{
-	ViewData["Title"] = "Update Book Information";
+	ViewData["Title"] = "Update or Delete Book Information";
 }
 
 <div class="row">
 	<div class="col-md-4">
-		<form asp-action="UpdateBook">
+		<form asp-action="EditBook">
 			<input asp-for="id" hidden />
 			<div class="form-group">
 				<label asp-for="Title" class="control-label"></label>
@@ -36,10 +36,8 @@
 			<div class="from-group">
 				<input name="action" type="submit" value="Save" class="btn btn-primary" />
 				<input name="action" type="submit" value="Delete" class="btn btn-danger" />
+				<a asp-action="BookIndex" class="btn btn-info">Back To List</a>
 			</div>
 		</form>
 	</div>
-</div>
-<div>
-	<a asp-action="BookIndex">Back To List</a>
 </div>
